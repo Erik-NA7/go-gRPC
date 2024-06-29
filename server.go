@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
-	controllers "unsia/controller"
+	controllers "unsia/controllers"
 	"unsia/pb/cities"
 	"unsia/pkg/database"
 
