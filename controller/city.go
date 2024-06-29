@@ -35,3 +35,13 @@ func (s *City) Update(ctx context.Context, in *cities.City) (*cities.City, error
 	err := cityModel.Update(ctx, s.DB, in)
 	return &cityModel.Pb, err
 }
+
+// DeleteCity function
+func (s *City) Delete(ctx context.Context, in *cities.Id) (*cities.MyBoolean, error) {
+	var cityModel models.City
+	err := cityModel.Delete(ctx, s.DB, in)
+	if err != nil {
+		return &cities.MyBoolean{ Boolean: false }, err
+	}
+	return &cities.MyBoolean{ Boolean: true }, nil
+}
