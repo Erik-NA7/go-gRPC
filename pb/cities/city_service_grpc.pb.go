@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion8
 const (
 	CitiesService_GetCity_FullMethodName = "/cities.CitiesService/GetCity"
 	CitiesService_Create_FullMethodName  = "/cities.CitiesService/Create"
+	CitiesService_Update_FullMethodName  = "/cities.CitiesService/Update"
 )
 
 // CitiesServiceClient is the client API for CitiesService service.
@@ -29,6 +30,7 @@ const (
 type CitiesServiceClient interface {
 	GetCity(ctx context.Context, in *Id, opts ...grpc.CallOption) (*City, error)
 	Create(ctx context.Context, in *CityInput, opts ...grpc.CallOption) (*City, error)
+	Update(ctx context.Context, in *City, opts ...grpc.CallOption) (*City, error)
 }
 
 type citiesServiceClient struct {
@@ -59,12 +61,23 @@ func (c *citiesServiceClient) Create(ctx context.Context, in *CityInput, opts ..
 	return out, nil
 }
 
+func (c *citiesServiceClient) Update(ctx context.Context, in *City, opts ...grpc.CallOption) (*City, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(City)
+	err := c.cc.Invoke(ctx, CitiesService_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CitiesServiceServer is the server API for CitiesService service.
 // All implementations should embed UnimplementedCitiesServiceServer
 // for forward compatibility
 type CitiesServiceServer interface {
 	GetCity(context.Context, *Id) (*City, error)
 	Create(context.Context, *CityInput) (*City, error)
+	Update(context.Context, *City) (*City, error)
 }
 
 // UnimplementedCitiesServiceServer should be embedded to have forward compatible implementations.
@@ -76,6 +89,9 @@ func (UnimplementedCitiesServiceServer) GetCity(context.Context, *Id) (*City, er
 }
 func (UnimplementedCitiesServiceServer) Create(context.Context, *CityInput) (*City, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedCitiesServiceServer) Update(context.Context, *City) (*City, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 
 // UnsafeCitiesServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -125,6 +141,24 @@ func _CitiesService_Create_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CitiesService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(City)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitiesServiceServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitiesService_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitiesServiceServer).Update(ctx, req.(*City))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CitiesService_ServiceDesc is the grpc.ServiceDesc for CitiesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +173,10 @@ var CitiesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _CitiesService_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _CitiesService_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -34,3 +34,19 @@ func (u *City) Create(ctx context.Context, db *sql.DB, in *cities.CityInput) err
 
 	return nil
 }
+
+func (u *City) Update(ctx context.Context, db *sql.DB, in *cities.City) error {
+	query := `UPDATE cities SET name=$2 WHERE id=$1 RETURNING id, name;`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	err = stmt.QueryRowContext(ctx, int32(in.Id), in.Name).Scan(&u.Pb.Id, &u.Pb.Name)
+	
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
