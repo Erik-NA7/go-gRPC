@@ -21,6 +21,7 @@ type City struct{
 // GetCity function
 func (s *City) GetCity(ctx context.Context, in *cities.Id) (*cities.City, error) {
 	var cityModel models.City
+	cityModel.Log = s.Log
 	err := cityModel.Get(ctx, s.DB, in)
 	return &cityModel.Pb, err
 }
@@ -28,6 +29,7 @@ func (s *City) GetCity(ctx context.Context, in *cities.Id) (*cities.City, error)
 // CreateCity function
 func (s *City) Create(ctx context.Context, in *cities.CityInput) (*cities.City, error) {
 	var cityModel models.City
+	cityModel.Log = s.Log
 	err := cityModel.Create(ctx, s.DB, in)
 	return &cityModel.Pb, err
 }
@@ -35,6 +37,7 @@ func (s *City) Create(ctx context.Context, in *cities.CityInput) (*cities.City, 
 // UpdateCity function
 func (s *City) Update(ctx context.Context, in *cities.City) (*cities.City, error) {
 	var cityModel models.City
+	cityModel.Log = s.Log
 	err := cityModel.Update(ctx, s.DB, in)
 	return &cityModel.Pb, err
 }
@@ -42,6 +45,7 @@ func (s *City) Update(ctx context.Context, in *cities.City) (*cities.City, error
 // DeleteCity function
 func (s *City) Delete(ctx context.Context, in *cities.Id) (*cities.MyBoolean, error) {
 	var cityModel models.City
+	cityModel.Log = s.Log
 	err := cityModel.Delete(ctx, s.DB, in)
 	if err != nil {
 		return &cities.MyBoolean{ Boolean: false }, err

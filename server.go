@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	controllers "unsia/controller"
 	"unsia/pb/cities"
 	"unsia/pkg/database"
@@ -19,6 +20,11 @@ func main() {
 		return
 	}
 
+	// ========================================================================
+	// Logging
+
+	log := log.New(os.Stdout, "GoGRPC : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+
 	db, err := database.OpenDB()
 	if err != nil {
 			log.Fatalf("error: connecting to db: %s", err)
@@ -26,14 +32,14 @@ func main() {
 	defer db.Close()
 
 	grpcServer := grpc.NewServer()
-	cityServer := controllers.City{DB: db}
+	cityServer := controllers.City{DB: db, Log: log}
 
 	cities.RegisterCitiesServiceServer(grpcServer, &cityServer)
 
 	fmt.Println("running grpc server...")
 
 	if err := grpcServer.Serve(lis); err != nil {
-		fmt.Printf("fialed to serve: %s", err)
+		fmt.Printf("failed to serve: %s", err)
 		return
 	}
 }
